@@ -114,4 +114,9 @@
   (js/console.log e)
   (reset! cubeOrientation {:a e.alpha :b e.beta :g e.gamma}))
 
-(d/orientationInit orientationHandler)
+(defn requestOrientationAccess []
+  (d/orientationInit orientationHandler)
+  (set! (js/document.querySelector "#access") -innerText @d/access-granted))
+
+(-> (js/document.querySelector "#request-access")
+    (.addEventListener "click" requestOrientationAccess))

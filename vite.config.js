@@ -3,5 +3,4 @@ export default {
         outDir: "dist",
     },
     base: "candle-squint"
-
 }

@@ -7,14 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "squint compile && vite",
     "watch": "squint watch",
-    "build": "squint compile && vite build" 
+    "build": "squint compile && vite build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "squint-cljs": "^0.6.87",
-    "three": "^0.160.0"
+    "three": "^0.160.0",
+    "three.quarks": "^0.11.2"
   },
   "devDependencies": {
     "vite": "^5.0.11"

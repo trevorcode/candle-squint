@@ -1,5 +1,7 @@
 (ns main
   (:require ["three" :as three]
+            ["three/addons/loaders/OBJLoader.js" :refer [OBJLoader]]
+            ["three/addons/loaders/MTLLoader.js" :refer [MTLLoader]]
             ["three/addons/controls/OrbitControls.js" :refer [OrbitControls]]
             ["three/addons/postprocessing/EffectComposer.js" :refer [EffectComposer]]
             ["three/addons/postprocessing/ShaderPass.js" :refer [ShaderPass]]
@@ -20,6 +22,24 @@
                 (.-innerHeight js/window))
              0.1
              100))
+
+(def scene-objects (atom []))
+
+(defn load-obj [{:keys [scene obj material]}]
+  (.load (MTLLoader.) material
+         (fn [materials]
+           (.preload materials)
+           (-> (OBJLoader.)
+               (.setMaterials materials)
+               (.load obj
+                      (fn [obj]
+                        (swap! scene-objects conj obj)
+                        (scene.add obj))
+                      nil nil)))))
+
+(load-obj {:scene scene :obj "CandleStick.obj" :material "CandleStick.mtl"})
+
+(js/console.log scene-objects)
 
 (.set camera.position 0 10 20)
 
@@ -83,9 +103,9 @@
 (def composer (EffectComposer. renderer))
 (.addPass composer (RenderPass. scene camera))
 
-(def effect (ShaderPass. DotScreenShader))
-(set! effect.uniforms.scale.value 4)
-(.addPass composer effect)
+;; (def effect (ShaderPass. DotScreenShader))
+;; (set! effect.uniforms.scale.value 4)
+;; (.addPass composer effect)
 
 (def effect1 (ShaderPass. RGBShiftShader))
 (set! effect1.uniforms.amount.value 0.0015)
@@ -95,6 +115,10 @@
 
 (defn animate []
   (js/requestAnimationFrame animate)
+
+  (let [candle (nth @scene-objects 0)]
+    (set! candle.rotation.y (+ 0.01 candle.rotation.y))
+    (set! candle.rotation.x (+ 0.01 candle.rotation.x)))
 
   (let [alphaDegrees (:a @cubeOrientation)
         betaDegrees (:b @cubeOrientation)
